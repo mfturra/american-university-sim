@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <style>
+        .title {
+            margin: 5px;
+        }
+        .student {
+            flex: 20%;
+            padding: 10px;
+            margin: 5pm;
+            background-color: #f3f3f3;
+            inline-size: 100%;
+        }
+    </style>
+    <body>
+        <div class="content">
+            {% block content %} {% endblock %}
+        </div>
+    </body>
+</html>

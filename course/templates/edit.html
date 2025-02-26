@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 style="width: 100%;">
+        {% block title %} 
+            Edit {{ student.firstname }} {{ student.lastname }}'s Details
+        {% endblock %}
+    </h1>
+    <form method="post">
+        <p>
+            <label for="firstname">First Name</label>
+            <input type="text" name="firstname" value="{{ student.firstname }}" placeholder="First Name">
+        </p>
+        <p>
+            <label for="lastname">Last Name</label>
+            <input type="text" name="lastname" value="{{ student.lastname }}" placeholder="Last Name">
+        </p>
+        <p>
+            <label for="email">Email</label>
+            <input type="text" name="email" value="{{ student.email }}" placeholder="Email">
+        </p>
+        <p>
+            <label for="age">Age</label>
+            <input type="text" name="age" value="{{ student.age }}" placeholder="Age">
+        </p>
+
+        <p>
+            <button type="submit">Submit</button>
+        </p>
+    </form>
+{% endblock %}
