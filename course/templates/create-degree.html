@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 style="width:100%"></h1>{% block title %} Add a New Degree {% endblock %}</h1>
+    <form method="POST">
+        <p>
+            <label for="degreetrack">Degree Track</label>
+            <input type="text" name="degree_track"
+                   placeholder="Degree Track">
+            </input>
+        </p>
+
+        <p>
+            <label for="degreename">Degree Name</label>
+            <input type="text" name="degree_name"
+                   placeholder="Degree Name">
+            </input>
+        </p>
+
+        <p>
+            <label for="degreedesc">Degree Description</label>
+            <input type="text" name="degree_desc"
+                   placeholder="Degree Description">
+            </input>
+        </p>
+
+        <p>
+            <label for="curri_diff">Curriculum Difficulty</label>
+            <input type="number" name="curriculum_difficulty"
+                   placeholder="Curriculum Difficulty">
+            </input>
+        </p>
+
+        <p>
+            <label for="uni_id">University ID</label>
+            <input type="number" name="uni_id"
+                   placeholder="University ID">
+            </input>
+        </p>
+        <p>
+            <button type="submit">Submit</button>
+        </p>
+    </form>
+{% endblock %}

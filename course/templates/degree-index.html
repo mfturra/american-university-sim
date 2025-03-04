@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="title">{% block title %} Available Degree Options {% endblock %}</h1>
+    <div class="content">
+        {% for degree in degrees %}
+            <div class="degree">
+                <!-- <p><b>{{ degree.id }}</b></p> -->
+            </div>
+            <p>{{ degree.degreetrack }}</p>
+            <p>{{ degree.degreename }}</p>
+            <p>{{ degree.degreedesc }}</p>
+            <p>{{ degree.curri_diff }}</p>
+            <p>{{ degree.uni_id }}</p>
+        {% endfor %}
+    </div>
+
+{% endblock %}

@@ -43,20 +43,18 @@ class Student(db.Model):
     age =           db.Column(db.Integer)
     created_at =    db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
-    
-    def __repr__(self):
-        return f'<Student {self.firstname}>'
+
 
 class Institution(db.Model):
     __tablename__ = "institutions"
 
     id =            db.Column(db.Integer, primary_key=True)
-    inst_type =     db.Column(db.String(30), unique=True, nullable=False)
+    inst_type =     db.Column(db.String(30), nullable=False)
     uni_name =      db.Column(db.String(30), unique=True, nullable=False)
     uni_type =      db.Column(db.String(25), unique=True, nullable=False)
     uni_welcome =   db.Column(db.String(300), unique=True, nullable=False)
     uni_cost =      db.Column(db.Float(precision=2), unique=False, nullable=False)
-    degrees =       db.relationship("Degree", back_populates="institution", lazy="dynamic")
+    degrees =       db.relationship("Degree", back_populates="institution")
 
 class Degree(db.Model):
     __tablename__ = "degrees"
@@ -68,7 +66,7 @@ class Degree(db.Model):
     degree_desc =               db.Column(db.String(500), unique=True, nullable=False)
     curriculum_difficulty =     db.Column(db.Float(precision=2), unique=False, nullable=False)
     uni_id =                    db.Column(db.Integer, db.ForeignKey("institutions.id"), unique=False, nullable=False)
-    institution =               db.relationship("Institution", back_populates="degrees", lazy="dynamic")
+    institution =               db.relationship("institutions", back_populates="degrees")
     
 # with Session.begin() as session, session.begin():
 #     # utilize a SessionTransaction object for transaction catch workflows
@@ -78,10 +76,12 @@ class Degree(db.Model):
 #         )
     # session.commit() automatically called
 
+## Student Workflow
 @app.route('/')
 def index():
     students = Student.query.all()
     return render_template('index.html', students=students)
+
 
 @app.route('/<int:student_id>/')
 def student(student_id):
@@ -136,3 +136,37 @@ def delete_student(student_id):
     db.session.delete(student)
     db.session.commit()
     return redirect(url_for('index'))
+
+## University Workflow 
+@app.route('/uni-index/')
+def uni_index():
+    universities = Institution.query.all()
+    return render_template('uni-index.html', universities=universities)
+
+@app.route('/uni-index/<int:uni_id>/')
+def university(uni_id):
+    university = Institution.query.get_or_404(uni_id)
+    return render_template('university.html', university=university)
+
+## Degree Workflow 
+@app.route('/degree-index/')
+def deg_index():
+    degrees= Degree.query.all()
+    return render_template('degree-index.html', degrees=degrees)
+
+@app.route('/create-degree/', methods=('GET', 'POST'))
+def create_degree():
+    if request.method == 'POST':
+        degreetrack = request.form('degree_track')
+        degreename = request.form('degree_name')
+        degreedesc = request.form('degree_desc')
+        curri_diff = request.form('curriculum_difficulty')
+        uni_id = request.form('uni_id')
+        degree = Degree(degreetrack=degreetrack,
+                        degreename=degreename,
+                        degreedesc=degreedesc,
+                        curri_diff=curri_diff,
+                        uni_id=uni_id)
+        db.session.add(degree)
+        db.session.commit()
+    return render_template('create-degree.html')

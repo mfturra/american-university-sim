@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1 class="title">{% block title %} Available University Options {% endblock %}</h1>
+    <div class="content">
+        {% for university in universities %}
+            <div class="university">
+                <!-- <p><b>{{ university.id }}</b></p> -->
+                <b>
+                    <p class="name">
+                        <!-- <a href="{{ url_for('university', uni_id=university.id) }}"></a> -->
+                         {{ university.uni_name }}
+                    </p>
+                    <p>Type of University: {{ university.uni_type }}</p>
+                    <p>University Greeting: {{ university.uni_welcome }}</p>
+                    <p>University Cost: ${{ university.uni_cost }}</p>
+                </b>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
