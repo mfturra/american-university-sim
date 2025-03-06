@@ -3,15 +3,16 @@
 {% block content %}
     <h1 class="title">{% block title %} Available Degree Options {% endblock %}</h1>
     <div class="content">
+        <h2>{{ degrees.degree_track }}</h2>
         {% for degree in degrees %}
             <div class="degree">
                 <!-- <p><b>{{ degree.id }}</b></p> -->
+                <p>Degree: {{ degree.degree_name }}</p>
+                <p>Description: {{ degree.degree_desc }}</p>
+                <p>Difficulty: {{ degree.curriculum_difficulty }}</p>
+                <p>{{ degree.uni_id }}</p>
             </div>
-            <p>{{ degree.degreetrack }}</p>
-            <p>{{ degree.degreename }}</p>
-            <p>{{ degree.degreedesc }}</p>
-            <p>{{ degree.curri_diff }}</p>
-            <p>{{ degree.uni_id }}</p>
+            
         {% endfor %}
     </div>
 

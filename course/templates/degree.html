@@ -1,0 +1,18 @@
+{ % extends 'base.html' %}
+
+{% block content %}
+    <h1 class="title"><h1>{% block title %} Degrees {% endblock %}</h1>
+    <div class="content">
+        {for degree in degrees %}
+            <div class="degree">
+                <p class="name">
+                    <a href="{{ url_for('main.degree', degree_id=degree.id) }}">{{ degree.degree_name }}</a>
+                </p>
+                
+                <!-- <p><b>{{ degree.degree_name }}</b></p> -->
+                <p>{{ degree.degree_track }} </p>
+                <p>{{ degree.degree_desc }} </p>
+                <p>{{ degree.curriculum_difficulty }} </p>
+                <!-- <p>{{ degree.uni_id }} </p> -->
+            </div>
+    </div>
