@@ -7,8 +7,7 @@ from flask_migrate import Migrate
 from models import db
 from routes import main
 
-from sqlalchemy import create_engine, text, select
-from sqlalchemy.orm import sessionmaker
+
 
 load_dotenv()
 

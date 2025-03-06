@@ -6,17 +6,18 @@
         <div class="university">
             <p>University Type: {{ university.uni_type }}</p>
             <p>Welcome Message: {{ university.uni_welcome }}</p>
-            <p>Semester Cost: ${{ university.uni_cost }}</p>
+            <p>Yearly Cost: ${{ university.uni_cost }}</p>
         </div>
         <div class="degrees">
-            {% if degree_track %}
-            <h2>Degree Track: {{ degree_track }}</h2>
-            {% endif %}
+            {% for track, degrees in degrees_by_track.items() %}
+            <h2>{{ track }}</h2>
 
-            {% for degree in degrees %}
-                <p><b>{{ degree.degree_name }}</b></p>
-                <p>Description: {{ degree.degree_desc }} </p>
-                <p>Curriculum Difficulty: {{ degree.curriculum_difficulty }} </p>
+
+                {% for degree in degrees %}
+                    <p><b>{{ degree.degree_name }}</b></p>
+                    <p>Description: {{ degree.degree_desc }} </p>
+                    <p>Curriculum Difficulty: {{ degree.curriculum_difficulty }} </p>
+                {% endfor %}
             {% endfor %}
         </div>
     </div>

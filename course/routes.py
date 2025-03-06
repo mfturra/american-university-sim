@@ -1,5 +1,10 @@
 from flask import Blueprint, render_template, request, url_for, redirect
-from models import Institution, Degree, Student
+from models import db, Institution, Degree, Student
+from collections import defaultdict
+import pprint
+
+from sqlalchemy import create_engine, text, select
+from sqlalchemy.orm import sessionmaker
 
 # define Blueprint for routes
 main = Blueprint('main', __name__)
@@ -9,7 +14,6 @@ main = Blueprint('main', __name__)
 def index():
     students = Student.query.all()
     return render_template('index.html', students=students)
-
 
 @main.route('/<int:student_id>/')
 def student(student_id):
@@ -65,24 +69,65 @@ def delete_student(student_id):
     db.session.commit()
     return redirect(url_for('index'))
 
+
+
 ## University Workflow 
-@main.route('/uni-index/')
+@main.route('/unis-index/')
 def uni_index():
     universities = Institution.query.all()
-    return render_template('uni-index.html', universities=universities)
+    return render_template('unis-index.html', universities=universities)
 
 @main.route('/uni-index/<int:uni_id>/')
 def university(uni_id):
     university = Institution.query.get_or_404(uni_id)
     degrees = Degree.query.filter_by(uni_id=uni_id).all()
-    degree_track = degrees[0].degree_track if degrees else None
-    return render_template('university.html', university=university, degrees=degrees, degree_track=degree_track)
+    degrees_by_track = defaultdict(list)
+    for degree in degrees:
+        degrees_by_track[degree.degree_track].append(degree)
+
+    # degree_track = degrees[0].degree_track if degrees else None
+    return render_template('university.html', university=university, degrees=degrees, degrees_by_track=degrees_by_track)
+
+
 
 ## Degree Workflow 
-@main.route('/degree-index/')
+@main.route('/degrees-index/')
 def deg_index():
     degrees= Degree.query.all()
-    return render_template('degree-index.html', degrees=degrees)
+
+    # group degrees 
+    grouped_degrees = defaultdict(lambda: defaultdict(list))
+
+    # check initial degree data
+    print(f"Total degrees to process: {len(degrees)}")
+    for degree in degrees:
+        print(f"Processing Degree ID: {degree.id}, Track: {degree.degree_track}, University ID: {degree.uni_id}, Name: {degree.degree_name}")
+
+
+    for degree in degrees:
+        if degree.uni_id == 1:
+            university_type = 'Public University'
+        elif degree.uni_id == 2:
+            university_type = 'Private University'
+        elif degree.uni_id == 3:
+            university_type = 'Community College'
+        else: 
+            continue
+    
+        print(f"Appending to {university_type}, Track: {degree.degree_track}")
+        
+        grouped_degrees[university_type][degree.degree_track].append(degree)
+
+    pprint.pprint(dict(grouped_degrees))
+
+    print("Grouped Degrees Structure:")
+    for university_type, degree_tracks in grouped_degrees.items():
+        print(f"{university_type}:")
+        for track, degrees_list in degree_tracks.items():
+            degree_names = [degree.degree_name for degree in degrees_list]
+            print(f"  {track}: {degree_names}")
+            
+    return render_template('degrees-index.html', grouped_degrees=grouped_degrees)
 
 
 @main.route('/degree-index/<int:degree_id>')
@@ -93,15 +138,15 @@ def degree(degree_id):
 @main.route('/create-degree/', methods=('GET', 'POST'))
 def create_degree():
     if request.method == 'POST':
-        degreetrack = request.form('degree_track')
-        degreename = request.form('degree_name')
-        degreedesc = request.form('degree_desc')
-        curri_diff = request.form('curriculum_difficulty')
-        uni_id = request.form('uni_id')
-        degree = Degree(degreetrack=degreetrack,
-                        degreename=degreename,
-                        degreedesc=degreedesc,
-                        curri_diff=curri_diff,
+        degree_track = request.form['degree_track']
+        degree_name = request.form['degree_name']
+        degree_desc = request.form['degree_desc']
+        curri_diff = request.form['curriculum_difficulty']
+        uni_id = request.form['uni_id']
+        degree = Degree(degree_track=degree_track,
+                        degree_name=degree_name,
+                        degree_desc=degree_desc,
+                        curriculum_difficulty=curri_diff,
                         uni_id=uni_id)
         db.session.add(degree)
         db.session.commit()

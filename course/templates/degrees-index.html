@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="title">{% block title %} Available Degree Options {% endblock %}</h1>
+    <div class="content">
+        {% for university_type, degree_tracks in grouped_degrees.items() %}
+            <h2>{{ university_type }}</h2>
+
+            {% for track, degrees in degree_tracks.items() %}
+                <h3>{{ track }}</h3>
+                <div class="degree">
+                    {% for degree in degrees %}
+                        <h4>{{ degree.degree_name }}</h4>
+                        <p>Description: {{ degree.degree_desc }}</p>
+                        <p>Difficulty: {{ degree.curriculum_difficulty }}</p>
+                    {% endfor %}
+                </div>   
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endblock %}
