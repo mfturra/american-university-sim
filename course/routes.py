@@ -1,10 +1,14 @@
-from flask import Blueprint, render_template, request, url_for, redirect
-from models import db, Institution, Degree, Student
+from flask import render_template, request, url_for, redirect
 from collections import defaultdict
+from flask.views import MethodView
+from flask_smorest import Blueprint, abort
+from models import db, Institution, Degree, Student
 import pprint
 
-from sqlalchemy import create_engine, text, select
-from sqlalchemy.orm import sessionmaker
+from schema import InstitutionSchema, InstitutionUpdateSchema
+
+# from sqlalchemy import create_engine, text, select
+# from sqlalchemy.orm import sessionmaker
 
 # define Blueprint for routes
 main = Blueprint('main', __name__)
@@ -70,24 +74,28 @@ def delete_student(student_id):
     return redirect(url_for('index'))
 
 
+blp = Blueprint("institution", __name__, description="All operations on institutions")
 
 ## University Workflow 
-@main.route('/unis-index/')
-def uni_index():
-    universities = Institution.query.all()
-    return render_template('unis-index.html', universities=universities)
+@blp.route('/uni-admin/')
+class InstitutionList(MethodView):
+    @blp.response(200, InstitutionSchema)
+    def uni_index(self):
+        universities = Institution.query.all()
+        return render_template('unis-index.html', universities=universities)
 
-@main.route('/uni-index/<int:uni_id>/')
-def university(uni_id):
-    university = Institution.query.get_or_404(uni_id)
-    degrees = Degree.query.filter_by(uni_id=uni_id).all()
-    degrees_by_track = defaultdict(list)
-    for degree in degrees:
-        degrees_by_track[degree.degree_track].append(degree)
+@blp.route('/uni-admin/<int:uni_id>/')
+class Institution(MethodView):
+    @blp.response(200, MethodView)
+    def university(self, uni_id):
+        university = Institution.query.get_or_404(uni_id)
+        degrees = Degree.query.filter_by(uni_id=uni_id).all()
+        degrees_by_track = defaultdict(list)
+        for degree in degrees:
+            degrees_by_track[degree.degree_track].append(degree)
 
-    # degree_track = degrees[0].degree_track if degrees else None
-    return render_template('university.html', university=university, degrees=degrees, degrees_by_track=degrees_by_track)
-
+        # degree_track = degrees[0].degree_track if degrees else None
+        return render_template('university.html', university=university, degrees=degrees, degrees_by_track=degrees_by_track)
 
 
 ## Degree Workflow 
@@ -98,12 +106,6 @@ def deg_index():
     # group degrees 
     grouped_degrees = defaultdict(lambda: defaultdict(list))
 
-    # check initial degree data
-    print(f"Total degrees to process: {len(degrees)}")
-    for degree in degrees:
-        print(f"Processing Degree ID: {degree.id}, Track: {degree.degree_track}, University ID: {degree.uni_id}, Name: {degree.degree_name}")
-
-
     for degree in degrees:
         if degree.uni_id == 1:
             university_type = 'Public University'
@@ -113,8 +115,6 @@ def deg_index():
             university_type = 'Community College'
         else: 
             continue
-    
-        print(f"Appending to {university_type}, Track: {degree.degree_track}")
         
         grouped_degrees[university_type][degree.degree_track].append(degree)
 

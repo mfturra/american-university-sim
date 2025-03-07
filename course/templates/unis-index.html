@@ -4,17 +4,22 @@
     <h1 class="title">{% block title %} Available University Options {% endblock %}</h1>
     <div class="content">
         {% for university in universities %}
-            <div class="university">
+            <div class="row">
                 <!-- <p><b>{{ university.id }}</b></p> -->
-                <b>
-                    <p class="name">
-                        <a href="{{ url_for('main.university', uni_id=university.id) }}">{{ university.uni_name }}</a>
-                    </p>
-                    <p>Type of University: {{ university.uni_type }}</p>
-                    <p>University Greeting: {{ university.uni_welcome }}</p>
-                    <p>University Cost: ${{ university.uni_cost }}</p>
-                </b>
+                <div class="column">
+                    <div class="university">
+                        <b>
+                            <p class="name">
+                                <a href="{{ url_for('blp.university', uni_id=university.id) }}">{{ university.uni_name }}</a>
+                            </p>
+                            <p>Type of University: {{ university.uni_type }}</p>
+                            <p>University Greeting: {{ university.uni_welcome }}</p>
+                            <p>University Cost: ${{ university.uni_cost }}</p>
+                        </b>
+                    </div>
+                </div>
             </div>
         {% endfor %}
+        </div>
     </div>
 {% endblock %}

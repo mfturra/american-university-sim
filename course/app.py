@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 
 from flask import Flask
+from flask_smorest import Api
 # from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from models import db
@@ -29,13 +30,24 @@ DB_URL = "postgresql://{0}:{1}@{2}:{3}/{4}".format(
 def create_app():
     # app config
     app = Flask(__name__)
+
+    app.config["PROPAGATE_EXCEPTIONS"] = True
+    app.config["API_TITLE"] = "Young Grasshopper REST API"
+    app.config["API_VERSION"] = "v1"
+    app.config["OPENAPI_VERSION"] = "3.0.3"
+    app.config["OPENAPI_URL_PREFIX"] = "/docs"
+    app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
+    app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite+pysqlite:///database.db"   # DB_URL
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # connect to Flask app to leverage all sqlalchemy capabilities
     # db = SQLAlchemy(app)
+    
     migrate = Migrate(app, db)
     db.init_app(app)
+
+    api = Api(app)
 
     app.register_blueprint(main)
 

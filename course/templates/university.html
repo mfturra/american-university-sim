@@ -10,14 +10,18 @@
         </div>
         <div class="degrees">
             {% for track, degrees in degrees_by_track.items() %}
-            <h2>{{ track }}</h2>
+            <div class="row">
+                <div class="column">
+                    <h2>{{ track }}</h2>
 
 
-                {% for degree in degrees %}
-                    <p><b>{{ degree.degree_name }}</b></p>
-                    <p>Description: {{ degree.degree_desc }} </p>
-                    <p>Curriculum Difficulty: {{ degree.curriculum_difficulty }} </p>
-                {% endfor %}
+                        {% for degree in degrees %}
+                            <p><b>{{ degree.degree_name }}</b></p>
+                            <p>Description: {{ degree.degree_desc }} </p>
+                            <p>Curriculum Difficulty: {{ degree.curriculum_difficulty }} </p>
+                        {% endfor %}
+                </div>
+            </div>
             {% endfor %}
         </div>
     </div>
