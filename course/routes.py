@@ -24,50 +24,50 @@ def student(student_id):
     student = Student.query.get_or_404(student_id)
     return render_template('student.html', student=student)
 
-@main.route('/create', methods=('GET', 'POST'))
-def create_student():
-    # POST request workflow
-    if request.method == 'POST':
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-        email = request.form['email']
-        age = request.form['age']
-        student = Student(firstname=firstname,
-                          lastname=lastname,
-                          email=email,
-                          age=age)
-        db.session.add(student)
-        db.session.commit()
+# @main.route('/create', methods=('GET', 'POST'))
+# def create_student():
+#     # POST request workflow
+#     if request.method == 'POST':
+#         firstname = request.form['firstname']
+#         lastname = request.form['lastname']
+#         email = request.form['email']
+#         age = request.form['age']
+#         student = Student(firstname=firstname,
+#                           lastname=lastname,
+#                           email=email,
+#                           age=age)
+#         db.session.add(student)
+#         db.session.commit()
 
-        return redirect(url_for('index'))
+#         return redirect(url_for('index'))
     
-    # GET request workflow
-    return render_template('create.html')
+#     # GET request workflow
+#     return render_template('create.html')
 
-@main.route('/<int:student_id>/edit/', methods=('GET','POST'))
-def edit_student(student_id):
-    student = Student.query.get_or_404(student_id)
+# @main.route('/<int:student_id>/edit/', methods=('GET','POST'))
+# def edit_student(student_id):
+#     student = Student.query.get_or_404(student_id)
 
-    if request.method == 'POST':
-        firstname = request.form['firstname']
-        lastname = request.form['lastname']
-        email = request.form['email']
-        age = request.form['age']
+#     if request.method == 'POST':
+#         firstname = request.form['firstname']
+#         lastname = request.form['lastname']
+#         email = request.form['email']
+#         age = request.form['age']
 
-        student.firstname = firstname
-        student.lastname = lastname
-        student.email = email
-        student.age = age
+#         student.firstname = firstname
+#         student.lastname = lastname
+#         student.email = email
+#         student.age = age
 
-        db.session.add(student)
-        db.session.commit()
+#         db.session.add(student)
+#         db.session.commit()
 
-        return redirect(url_for('index'))
+#         return redirect(url_for('index'))
 
-    return render_template('edit.html', student=student)
+#     return render_template('edit.html', student=student)
 
-@main.post('/<int:student_id>/delete/')
-def delete_student(student_id):
+# @main.post('/<int:student_id>/delete/')
+# def delete_student(student_id):
     student = Student.query.get_or_404(student_id)
     db.session.delete(student)
     db.session.commit()
@@ -77,17 +77,16 @@ def delete_student(student_id):
 blp = Blueprint("institution", __name__, description="All operations on institutions")
 
 ## University Workflow 
-@blp.route('/uni-admin/')
+
 class InstitutionList(MethodView):
     @blp.response(200, InstitutionSchema)
-    def uni_index(self):
+    def get(self):
         universities = Institution.query.all()
         return render_template('unis-index.html', universities=universities)
 
-@blp.route('/uni-admin/<int:uni_id>/')
 class Institution(MethodView):
-    @blp.response(200, MethodView)
-    def university(self, uni_id):
+    @blp.response(200, InstitutionSchema)
+    def get(self, uni_id):
         university = Institution.query.get_or_404(uni_id)
         degrees = Degree.query.filter_by(uni_id=uni_id).all()
         degrees_by_track = defaultdict(list)
@@ -96,6 +95,11 @@ class Institution(MethodView):
 
         # degree_track = degrees[0].degree_track if degrees else None
         return render_template('university.html', university=university, degrees=degrees, degrees_by_track=degrees_by_track)
+
+# @blp.route('/uni-admin/')
+# @blp.route('/uni-admin/')
+blp.add_url_rule('/uni-admin/', view_func=InstitutionList.as_view('institution_list'))
+blp.add_url_rule('/uni-admin/<int:uni_id>/', view_func=Institution.as_view('institution_details'))
 
 
 ## Degree Workflow 

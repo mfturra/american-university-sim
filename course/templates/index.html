@@ -1,28 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 class="title">{% block title %} Students {% endblock %}</h1>
+    <!-- <h1 class="title">{% block title %}Login{% endblock %}</h1> -->
+    <h2>{{ page_title }}</h2>
+    <h3>{{ game_location }}</h3>
+    <p>{{ introduction }}</p>
+    <p>{{ call_to_action }}</p>
+    <p>{{ action_step }}</p>
     <div class="content">
-        {% for student in students %}
-            <div class="student">
-                <p><b>#{{ student.id }}</b></p>
-                <b>
-                    <p class="name">
-                        <a href="{{ url_for('student', student_id=student.id) }}">
-                            {{ student.firstname }} {{ student.lastname }}</p>
-                        </a>
-                    </p>
-                </b>
-                <p>{{ student.email }}</p>
-                <p>{{ student.age }} years old.</p>
-                <p>Joined: {{ student.created_at }}</p>
-                <a href="{{ url_for('edit_student', student_id=student.id) }}">Edit</a>
-
-                <hr>
-                <form method="POST" action="{{ url_for('delete_student', student_id=student.id) }}">
-                    <input type="submit" value="Delete Student" onclick="return confirm('Are you sure that you want to delete this entry?')">
-                </form>
-            </div>
-        {% endfor %}
+            <form action="/" method="POST" id="action-form">
+                <input type="text" name="command" placeholder="Enter command here" required autofocus>
+            </form>
+            <script>
+                document.getElementById('action-form').addEventListener('keyup', function(event) {
+                    if (event.key == 'Enter') {
+                        event.preventDefault();
+                        this.submit();
+                    }
+                })
+            </script>
+        </div>
     </div>
 {% endblock %}
