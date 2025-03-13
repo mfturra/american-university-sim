@@ -1,16 +1,14 @@
-from flask_sqlalchemy import SQLAlchemy
+from . import db
 from sqlalchemy.sql import func
-
-# initialize the SQLAlchemy object
-db = SQLAlchemy()
 
 # student class config
 class Student(db.Model):
     __tablename__ = 'students'
     id =            db.Column(db.Integer, primary_key=True)
-    firstname =     db.Column(db.String(100), nullable=False)
-    lastname =      db.Column(db.String(100), nullable=False)
+    firstname =     db.Column(db.String(50), nullable=False)
+    lastname =      db.Column(db.String(50), nullable=False)
     email =         db.Column(db.String(80), unique=True, nullable=False)
+    password =      db.Column(db.String(100))
     age =           db.Column(db.Integer)
     created_at =    db.Column(db.DateTime(timezone=True),
                         server_default=func.now())

@@ -1,5 +1,6 @@
 from flask import Blueprint
+from .. import db
 
 auth = Blueprint('auth', __name__)
 
-from course.auth import auth_routes
+from . import auth_routes

@@ -4,6 +4,13 @@
     <h2>{{ main_title }}</h2>
     <h3>{{ sub_title }}</h3>
     <p>{{ call_to_action }}</p>
+    {% with messages = get_flashed_message() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[0] }}. Go to <a href="{{ url_for('auth.login') }}">login page</a>
+            </div>
+        {% endif %}
+    {% endwith% }
 
     <form action="/create" method="POST" id="action-form">
         <label for="first_name">First Name:</label>

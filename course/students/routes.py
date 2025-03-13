@@ -12,6 +12,7 @@ def main():
         elif command == 'logout':
             return redirect(url_for('logout'))
 
+    return render_template('university.html')
 
 # @bp.route('/student/', methods=['GET', 'POST'])
 # def student_index():

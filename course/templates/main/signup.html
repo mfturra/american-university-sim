@@ -1,25 +1,43 @@
-{% extends 'base.html' %}
+{% extends 'main/main-template.html' %}
 
 {% block content %}
 <div class="column is-4 is-offset-4"></div>
-    <h3 class="title">Sign up</h3>
+    <h3 class="title">Sign up to Grasshopper Island</h3>
     <div class="box">
-        <form method="POST" action="signup">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="notification is-danger">
+                    {{ messages[0] }}. Go to <a href="{{ url_for('auth.login') }}">login page</a>
+                </div>
+            {% endif %}
+        {% endwith %}
+        <!-- <h2>{{ main_title }}</h2> -->
+        <!-- <h3>{{ sub_title }}</h3> -->
+        <p>{{ call_to_action}}</p>
+        <form method="POST" action="/signup">
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="email" name="email" placeholder="Your Email">
+                    <input class="input is-medium" type="email" name="email" placeholder="Your Email">
                 </div>
             </div>
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="name" placeholder="Your Name">
+                    <input class="input is-medium" type="text" name="name" placeholder="Your Name">
                 </div>
             </div>
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="password" name="password" placeholder="Your Password">
+                    <input class="input is-medium" type="password" name="password" placeholder="Your Password">
                 </div>
             </div>
+            <div class="field">
+                <div class="control">
+                    <p>{{ action_step }}</p>
+                    <input class="is-block is-info is-fullwidth" type="text" name="command" placeholder="Enter command here" required>
+                </div>
+
+            </div>
+            <!-- <button class="button is-block is-info is-medium is-fullwidth">Login</button> -->
         </form>
     </div>
 {% endblock %}

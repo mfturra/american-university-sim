@@ -2,18 +2,21 @@
 
 {% block content%}
 <div class="">
-    <h3 class="title">Login</h3>
+    <h3 class="title">Login to Grasshopper Island</h3>
     <div class="box">
+        <!-- <h2>{{ main_title }}</h2> -->
+        <p>{{ greeting }}</p>
+        <p>{{ call_to_action }}</p>
         <form method="POST" action="/login">
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="email" name="email" placeholder="Your Email">
+                    <input class="input is-medium" type="email" name="email" placeholder="Your Email">
                 </div>
             </div>
 
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="password" name="password" placeholder="Your Password">
+                    <input class="input is-medium" type="password" name="password" placeholder="Your Password">
                 </div>
             </div>
             
@@ -22,8 +25,23 @@
                     <input type="checkbox" name="remember">Remember me
                 </label>
             </div>
+            <div class="field">
+                <label class="command">
+                    <p>{{ login_action_step }}</p>
+                    <input type="text" name="command" placeholder="Enter command here" required>
+                </label>
+            </div>
 
+            <!-- <button class="button is-block is-info is-medium is-fullwidth">Login</button> -->
         </form>
     </div>
 </div>
+<script>
+    document.getElementById('action-form').addEventListener('keyup', function(event) {
+        if (event.key == 'Enter') {
+            event.preventDefault();
+            this.submit();
+        }
+    })
+</script>
 {% endblock %}
