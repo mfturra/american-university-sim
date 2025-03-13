@@ -1,10 +1,31 @@
 from flask import request, redirect, url_for, render_template, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import current_user, login_required, logout_user, login_user
 from . import auth
 from ..models import Student
 from .. import db
 
-@auth.route('/login')
+@auth.route('/', methods=['GET', 'POST'])
+# @login_required
+def index():
+    if request.method == 'POST':
+        command = request.form.get('command').strip().lower()
+        if command == 'create':
+            return redirect(url_for('auth.signup'))
+        elif command == 'login':
+            return redirect(url_for('auth.login'))
+        else:
+            flash('Invalid command. Please type "create" or "login" to proceed.')
+    return render_template('students/index.html',
+                            page_title = "Grasshopper Island",
+                            game_location = "Unknown, Massachusetts",
+                            introduction = "Welcome ", 
+                            sub_title = "Create Your Account",
+                            call_to_action = "Please create an account or login to start your journey on Grasshopper Island!",
+                            action_step = "To create your account type 'create'. To login, type 'login':")
+
+
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email =     request.form.get('email')
@@ -14,9 +35,14 @@ def login():
         # route student based on their input
         if command == 'create':
             # flash("It looks like you don't have an account. Let's create one!")
-            return redirect(url_for('signup'))
+            return redirect(url_for('auth.signup'))
         elif command == 'login':
-            return redirect(url_for('login'))
+            student = Student.query.filter_by(email=email).first()
+
+            if not student or not check_password_hash(student.password, password):
+                flash('Please check your login details and try again.')
+                return redirect(url_for('auth.login'))
+            return redirect(url_for('students.main'))
         else:
             flash('Invalid command. Please type "create" or "login" to proceed.')
 
@@ -39,21 +65,20 @@ def signup():
 
         # check if user already exists
         student = Student.query.filter_by(email=email).first()
-
-        # check if user found to redirect to signup page
-        if student:
-            flash('Email address already exists')
-            return redirect(url_for('main/signup'))
-
-        if len(password) < 7:
-            flash('Password must be at least 7 characters long.')
-            return redirect(url_for('main/signup'))
         
         # check user input for next step
         if command == 'create':
-            return redirect(url_for('main/signup'))
+            # check if user found to redirect to signup page
+            if student:
+                flash('Email address already exists')
+                return redirect(url_for('auth.signup'))
+
+            if len(password) < 7:
+                flash('Password must be at least 7 characters long.')
+                return redirect(url_for('auth.signup'))
+            return redirect(url_for('auth.signup'))
         elif command == 'login':
-            return redirect(url_for('main/login'))
+            return redirect(url_for('auth.login'))
         else:
             flash('Invalid command. Please type "create" or "login" to proceed.')
             # return redirect(url_for('create_account'))
@@ -73,14 +98,13 @@ def signup():
                             sub_title = "Create Your Account",
                             call_to_action = "Please create an account to start your journey on Grasshopper Island!",
                             action_step = "To create your account type 'create'. To login, type 'login':")
-
-# @auth.route('/signup', methods=['GET', 'POST'])
-# def signup_post():
     
 
 @auth.route('/logout')
+@login_required
 def logout():
-    return 'Logout reached!'
+    logout_user()
+    return redirect(url_for('main.index'))
 
 # # home page route
 # @auth.route('/', methods=['GET', 'POST'])

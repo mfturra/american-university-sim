@@ -14,7 +14,7 @@
         <!-- <h2>{{ main_title }}</h2> -->
         <!-- <h3>{{ sub_title }}</h3> -->
         <p>{{ call_to_action}}</p>
-        <form method="POST" action="/signup">
+        <form method="POST" action="/signup" id="action-form">
             <div class="field">
                 <div class="control">
                     <input class="input is-medium" type="email" name="email" placeholder="Your Email">
@@ -33,11 +33,19 @@
             <div class="field">
                 <div class="control">
                     <p>{{ action_step }}</p>
-                    <input class="is-block is-info is-fullwidth" type="text" name="command" placeholder="Enter command here" required>
+                    <input class="input is-info is-fullwidth" type="text" name="command" placeholder="Enter command here" required>
                 </div>
 
             </div>
             <!-- <button class="button is-block is-info is-medium is-fullwidth">Login</button> -->
         </form>
     </div>
+    <script>
+        document.getElementById('action-form').addEventListener('keyup', function(event) {
+            if (event.key == 'Enter') {
+                event.preventDefault();
+                this.submit();
+            }
+        })
+    </script>
 {% endblock %}

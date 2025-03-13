@@ -1,8 +1,9 @@
+from flask_login import UserMixin
 from . import db
 from sqlalchemy.sql import func
 
 # student class config
-class Student(db.Model):
+class Student(UserMixin, db.Model):
     __tablename__ = 'students'
     id =            db.Column(db.Integer, primary_key=True)
     firstname =     db.Column(db.String(50), nullable=False)

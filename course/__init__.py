@@ -1,7 +1,8 @@
+import os
 from flask import Flask
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
-import os
+from flask_login import LoginManager
 
 db = SQLAlchemy()
 
@@ -14,17 +15,25 @@ def create_app(config_class=Config):
 
     db.init_app(app)
 
-    # Flask extensions placeholder
+    # Flask extensions
+    login_manager = LoginManager()
+    login_manager.login_view = 'auth.index'
+    login_manager.init_app(app)
 
-    # Blueprint register placeholder
-    from course.main import bp as main_bp
+    from .models import Student, Institution, Degree
+
+    @login_manager.user_loader
+    def load_student(student_id):
+        return Student.query.get(int(student_id))
+
+    # Blueprint register
+    from course.main import main as main_bp
     app.register_blueprint(main_bp)
 
-    # blueprint for auth routes in app
     from course.auth import auth as auth_bp
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(auth_bp)#, url_prefix='/auth')
 
-    from course.students import bp as student_bp
+    from course.students import students as student_bp
     app.register_blueprint(student_bp)
     
     return app

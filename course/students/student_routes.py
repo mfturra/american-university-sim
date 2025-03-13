@@ -1,7 +1,8 @@
 from flask import request, redirect, url_for, render_template, flash
-from course.students import bp
+from flask_login import current_user
+from . import students
 
-@bp.route('/main', methods=['GET', 'POST'])
+@students.route('/main', methods=['GET', 'POST'])
 def main():
     if request.method == 'POST':
         command = request.form.get('command').strip().lower()
@@ -12,7 +13,13 @@ def main():
         elif command == 'logout':
             return redirect(url_for('logout'))
 
-    return render_template('university.html')
+    return render_template('students/index.html', 
+                            name=current_user.firstname,
+                            page_title = "Grasshopper Island",
+                            introduction = "Welcome",
+                            edu_exploration = "Enter the university option that you'd like to explore.",
+                            edu_options = "Your available options are: 'Public University' or 'Private University'.",
+                            logout_option = "To logout, type 'logout'.")
 
 # @bp.route('/student/', methods=['GET', 'POST'])
 # def student_index():

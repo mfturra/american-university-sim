@@ -2,12 +2,15 @@
 
 {% block content %}
     <span class="title"><h1>{% block title %} Welcome to Grasshopper Island {% endblock %}</h1></span>
-    <h2>{{ introduction }}</h2>
+    <h2>{{ introduction }} {{ name }}!</h2>
+    <h2>Grasshopper Island is a text-based game designed to simulate attending a four-year university without the expenses associated with it.  Here you'll be able to explore how small decisions about your degrees, loans types, and employment opportunities can compound to make you better or worse suited to pay off your student loan.</h2>
     <p>{{ edu_exploration }}</p>
     <p>{{ edu_options }}</p>
     {% if 'student' in session %}
         <p>{{ logout_option }}</p>
     {% endif %}
+
+
 
     <form action="/" method="POST" id="action-form">
         <input type="text" name="command" placeholder="Enter command here" required autofocus>

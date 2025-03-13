@@ -7,7 +7,14 @@
         <!-- <h2>{{ main_title }}</h2> -->
         <p>{{ greeting }}</p>
         <p>{{ call_to_action }}</p>
-        <form method="POST" action="/login">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="notification is-danger">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="/login" id="action-form">
             <div class="field">
                 <div class="control">
                     <input class="input is-medium" type="email" name="email" placeholder="Your Email">
@@ -22,13 +29,13 @@
             
             <div class="field">
                 <label class="checkbox">
-                    <input type="checkbox" name="remember">Remember me
+                    <input type="checkbox" name="remember">   Remember me
                 </label>
             </div>
             <div class="field">
                 <label class="command">
                     <p>{{ login_action_step }}</p>
-                    <input type="text" name="command" placeholder="Enter command here" required>
+                    <input class="input is-medium" type="text" name="command" placeholder="Enter command here" required>
                 </label>
             </div>
 

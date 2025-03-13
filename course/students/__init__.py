@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-bp = Blueprint('students', __name__)
+students = Blueprint('students', __name__)
 
-from course.students import routes
+from . import student_routes
