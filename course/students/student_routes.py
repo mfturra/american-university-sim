@@ -34,24 +34,40 @@ def main():
                             universities=universities)
 
 
-@students.route('/main/degree_opts/<string:command>/', methods=['GET'])
+@students.route('/main/degree_opts/<string:command>/', methods=['GET', 'POST'])
 @login_required
 def degree_opts(command):
-    universities = Institution.query.filter_by(uni_type=command).all()
+    normalized_command = command.lower()
+
+    universities = Institution.query.all()
+    matched_universities = [uni for uni in universities if uni.uni_type.lower() == normalized_command]
+    
     degrees_by_uni = {}
 
-    for university in universities:
+    for university in matched_universities:
         degrees = Degree.query.filter_by(uni_id=university.id).all()
-        degrees_by_uni[university.name] = degrees
+        degrees_by_track = defaultdict(list)
+        for degree in degrees:
+            degrees_by_track[degree.degree_track].append(degree)
+
+        degrees_by_uni[university.uni_name] = degrees
         # degrees_by_track = defaultdict(list)
     
+    if request.method == 'POST':
+        command = request.form.get('command').strip().lower()
+
+        if command in ['public', 'private', 'community']:
+            return redirect(url_for('students.degree_opts', command=command))
+
+
     # for degree in degrees:
     #     degrees_by_track[degree.degree_track].append(degree)
 
-    return render_template('university.html', 
-                           university=university, 
-                           degrees=degrees, 
-                           degrees_by_track=degrees_by_track)
+    return render_template('students/university.html', 
+                           universities=matched_universities,
+                           degrees_by_track=degrees_by_track,
+                           degrees_by_uni=degrees_by_uni, 
+                           command=command)
     # return render_template('unis-index.html', universities=universities)
         
     # students.add_url_rule('/uni-admin/', view_func=InstitutionList.as_view('institution_list'))

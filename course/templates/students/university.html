@@ -1,30 +1,83 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ uni_type }}</h1>
+    {% for university in universities %}
+        <h1 class="is-size-3 has-text-centered title">{{ university.uni_name }}</h1>
+        <h1 class="is-size-4 has-text-centered title">{{ university.uni_welcome }}</h1>
+    {% endfor %}
+    <div class="field">
+        <div class="control">
+            <div class="columns is-multiline">
+                {% for track, degrees in degrees_by_track.items() %}
+                <div class="column is-full">
+                    <h2 class="title is-4">{{ track }}</h2>
+                </div>
+                    {% for degree in degrees %}
+                        <div class="column is-one-third  mg-small">
+                            <div class="box has-text-centered">
+                                <p class=""><b>{{ degree.degree_name }}</b></p>
+                                <p class="has-text-left">Description: {{ degree.degree_desc }} </p>
+                                <p>Curriculum Difficulty: {{ degree.curriculum_difficulty }} </p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="column is-full">
+                        <hr class="my-5">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <p class="is-size-5">To return back to the island home type 'home':</p>
+        </div>
+    </div>
+    
+    <!-- <h1>{{ uni_type }}</h1>
     <p>{{ public_intro }}</p>
-    <p>{{ general_tracks_intro }}</p>
-    <p>To return back to the island home type 'home':</p>
-    <tr>
+    <p>{{ general_tracks_intro }}</p> -->
+    <!-- <tr>
         <th>{{ business_tracks }}</th>
         <th>{{ social_sciences_tracks }}</th>
         <th>{{ stem_tracks }}</th>
-    </tr>
+    </tr> -->
+    <!-- {% for degrees in degrees_by_uni.items() %}
+        <ul>
+            {% for degree in degrees %}
+            <li>{{ degree.degree_name }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %} -->
     <p>{{ track_query }}</p>
     {% if 'student' in session %}
         <p>{{ logout_option }}</p>
     {% endif %}
 
-    <form method="POST" id="action-form" action="/main">
-        <input type="text" name="command" placeholder="Enter command here" required autofocus>
+    <form method="POST" id="action-form" onsubmit="setActionURL()">
+        <div class="field">
+            <div class="control">
+                <input class="input is-size-5" type="text" name="command" placeholder="Enter command here" required>
+            </div>
+        </div>
     </form>
 
     <script>
+        function setActionUrl() {
+            const commandInput = document.getElementById('command-input').value;
+            const form = document.getElementById('action-form');
+            
+            // Update the form action to include the command in the URL
+            form.action = "{{ url_for('students.degree_opts', command='') }}" + commandInput;
+        }
+
+        // listen to keyUp events on form
         document.getElementById('action-form').addEventListener('keyup', function(event) {
             if (event.key = 'Enter') {
                 event.preventDefault();
+                setActionUrl();
                 this.submit();
             }
-        })
+        });
     </script>
 {% endblock %}
