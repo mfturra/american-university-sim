@@ -1,25 +1,81 @@
 from flask import request, redirect, url_for, render_template, flash
-from flask_login import current_user
+from flask_login import current_user, login_required, logout_user
 from . import students
+from collections import defaultdict
+from flask.views import MethodView
+from ..models import Institution, Degree, Student
+from ..schema import InstitutionSchema, InstitutionUpdateSchema
 
 @students.route('/main', methods=['GET', 'POST'])
+@login_required
 def main():
+    universities = Institution.query.all()
+
     if request.method == 'POST':
         command = request.form.get('command').strip().lower()
-        if command == 'public' or 'public university':
-            return redirect(url_for('university_template'))
-        elif command == 'private' or 'private_university':
-            return redirect(url_for('university_template'))
-        elif command == 'logout':
+        
+        if command == 'logout':
             return redirect(url_for('logout'))
+        
+        for university in universities:
+            if command == university.uni_name.lower():
+                return redirect(url_for('students.degree_opts', uni_id=university.id))
+        
+        if command in ['public', 'private', 'community']:
+            return redirect(url_for('students.degree_opts', command=command))
 
     return render_template('students/index.html', 
                             name=current_user.firstname,
                             page_title = "Grasshopper Island",
                             introduction = "Welcome",
+                            edu_options = "Your available options can be found below:",
                             edu_exploration = "Enter the university option that you'd like to explore.",
-                            edu_options = "Your available options are: 'Public University' or 'Private University'.",
-                            logout_option = "To logout, type 'logout'.")
+                            logout_option = "To logout, type 'logout'.",
+                            universities=universities)
+
+
+@students.route('/main/degree_opts/<string:command>/', methods=['GET'])
+@login_required
+def degree_opts(command):
+    universities = Institution.query.filter_by(uni_type=command).all()
+    degrees_by_uni = {}
+
+    for university in universities:
+        degrees = Degree.query.filter_by(uni_id=university.id).all()
+        degrees_by_uni[university.name] = degrees
+        # degrees_by_track = defaultdict(list)
+    
+    # for degree in degrees:
+    #     degrees_by_track[degree.degree_track].append(degree)
+
+    return render_template('university.html', 
+                           university=university, 
+                           degrees=degrees, 
+                           degrees_by_track=degrees_by_track)
+    # return render_template('unis-index.html', universities=universities)
+        
+    # students.add_url_rule('/uni-admin/', view_func=InstitutionList.as_view('institution_list'))
+    
+    # class Institution(MethodView):
+    #     @students.response(200, InstitutionSchema)
+    #     def get(self, uni_id):
+    #         university = Institution.query.get_or_404(uni_id)
+    #         degrees = Degree.query.filter_by(uni_id=uni_id).all()
+    #         degrees_by_track = defaultdict(list)
+    #         for degree in degrees:
+    #             degrees_by_track[degree.degree_track].append(degree)
+
+    #         # degree_track = degrees[0].degree_track if degrees else None
+    #         return render_template('university.html', university=university, degrees=degrees, degrees_by_track=degrees_by_track)
+
+    
+    students.add_url_rule('/uni-admin/<int:uni_id>/', view_func=Institution.as_view('institution_details'))
+
+@students.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('main.index'))
 
 # @bp.route('/student/', methods=['GET', 'POST'])
 # def student_index():

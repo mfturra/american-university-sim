@@ -41,6 +41,13 @@
             background-color: #f3f3f3;
             inline-size: 100%;
         }
+        .university-card {
+            /* border: 1px solid #ccc; */
+            padding: 10px;
+            text-align: center; /* Center aligns text */
+            border-radius: 5px; /* Rounded corners */
+            /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+        }
 
         /* Responsive Styling */
         @media screen and (max-width: 600px) {
@@ -53,8 +60,25 @@
 
     </style>
     <body>
-            <div class="container has-text-centered">
-                {% block content %} {% endblock %}
+        <section class="hero is-primary is-fullheight">
+            <div class="hero-head">
+                <nav class="navbar">
+                    <div class="container">
+                        <div id="navbarMenuHeroA" class="navbar-menu">
+                            <div class="navbar-end">
+                                <a href="{{ url_for('auth.index') }}" class="navbar-item">Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
             </div>
+            <div class="hero-body">
+                <div class="container">
+                <!-- <div class="container has-text-centered"> -->
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </section>
     </body>
 </html>

@@ -2,14 +2,18 @@
 
 {% block content %}
     <!-- <h1 class="title">{% block title %}Login{% endblock %}</h1> -->
-    <h2>{{ page_title }}</h2>
-    <h3>{{ game_location }}</h3>
-    <p>{{ introduction }}</p>
+    <h2 class="is-size-2 has-text-centered">{{ page_title }}</h2>
+    <h3 class="is-size-4 has-text-centered">Location: {{ game_location }}</h3>
+    <p>{{ introduction }} Grasshopper Island is a text-based game designed to simulate attending a four-year university without the expenses associated with it.  Here you'll be able to explore how small decisions about your degrees, loans types, and employment opportunities can compound to make you better or worse suited to pay your student loan.</p>
     <p>{{ call_to_action }}</p>
     <p>{{ action_step }}</p>
     <div class="content">
             <form action="/" method="POST" id="action-form">
-                <input type="text" name="command" placeholder="Enter command here" required autofocus>
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-size-6" type="text" name="command" placeholder="Enter command here" required autofocus>
+                    </div>
+                </div>
             </form>
             <script>
                 document.getElementById('action-form').addEventListener('keyup', function(event) {
