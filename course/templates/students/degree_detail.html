@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for university in universities %}
+        <h1 class="is-size-3 has-text-centered title">{{ university.uni_name }}</h1>
+    {% endfor %}
+    <div class="field">
+        <div class="control">
+            {% for degree in degrees %}
+                <p class=""><b>{{ degree.degree_name }}</b></p>
+                <p class="has-text-left">Description: {{ degree.degree_desc }} </p>
+            {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock}

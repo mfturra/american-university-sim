@@ -17,12 +17,15 @@ def main():
         if command == 'logout':
             return redirect(url_for('logout'))
         
+        # cycle through university options and check for matches to command request
         for university in universities:
-            if command == university.uni_name.lower():
-                return redirect(url_for('students.degree_opts', uni_id=university.id))
+            if command == university.uni_type.lower():
+                print(f"\n\nThe following command was fulfilled: {command}")
+                return redirect(url_for('students.degree_opts', uni_id=university.id, command=command))
         
-        if command in ['public', 'private', 'community']:
-            return redirect(url_for('students.degree_opts', command=command))
+        # if command in ['public', 'private', 'community']:
+        #     print("Command is reaching this branch")
+        #     return redirect(url_for('students.degree_opts', command=command))
 
     return render_template('students/index.html', 
                             name=current_user.firstname,
@@ -37,55 +40,97 @@ def main():
 @students.route('/main/degree_opts/<string:command>/', methods=['GET', 'POST'])
 @login_required
 def degree_opts(command):
+    # Pass in and normalize the user input to match with db table
     normalized_command = command.lower()
 
+    # query all universities and pull info on solely the matched university
     universities = Institution.query.all()
     matched_universities = [uni for uni in universities if uni.uni_type.lower() == normalized_command]
     
+    # create empty storage for degree elements
     degrees_by_uni = {}
+    degrees_by_track = defaultdict(list)
 
+    # identify all degrees based on the matching university
     for university in matched_universities:
         degrees = Degree.query.filter_by(uni_id=university.id).all()
-        degrees_by_track = defaultdict(list)
         for degree in degrees:
+            # pull degree_track table object and append its degree elements to a new dict
             degrees_by_track[degree.degree_track].append(degree)
 
+        # store all degrees objects at uni at degrees_by_uni (inactive)
         degrees_by_uni[university.uni_name] = degrees
-        # degrees_by_track = defaultdict(list)
+
     
     if request.method == 'POST':
-        command = request.form.get('command').strip().lower()
+        selected_degree = request.form.get('degree').strip().lower()
+        nav_command = request.form.get('nav-command').lower()
 
-        if command in ['public', 'private', 'community']:
-            return redirect(url_for('students.degree_opts', command=command))
+        # acquire all degrees that match for this university
+        degrees = Degree.query.filter_by(uni_id=university.id).all()
+        
+        # modify degree titles to facilitate matching with user input
+        matched_degrees = [degree for degree in degrees if degree.degree_name.strip().lower() == selected_degree]
 
+        # cycle through degree objects and check for matches to degree request
+        for degree in matched_degrees:
+            if selected_degree == degree.degree_name.strip().lower():
+                print(f"\n\nThe following command was fulfilled: {selected_degree}")
+                return redirect(url_for('students.degree_select', command=command))
+        
 
-    # for degree in degrees:
-    #     degrees_by_track[degree.degree_track].append(degree)
+        return redirect(url_for('students.degree_select', degree=selected_degree, command=nav_command))
+
 
     return render_template('students/university.html', 
                            universities=matched_universities,
                            degrees_by_track=degrees_by_track,
-                           degrees_by_uni=degrees_by_uni, 
-                           command=command)
-    # return render_template('unis-index.html', universities=universities)
-        
-    # students.add_url_rule('/uni-admin/', view_func=InstitutionList.as_view('institution_list'))
-    
-    # class Institution(MethodView):
-    #     @students.response(200, InstitutionSchema)
-    #     def get(self, uni_id):
-    #         university = Institution.query.get_or_404(uni_id)
-    #         degrees = Degree.query.filter_by(uni_id=uni_id).all()
-    #         degrees_by_track = defaultdict(list)
-    #         for degree in degrees:
-    #             degrees_by_track[degree.degree_track].append(degree)
+                           degrees_by_uni=degrees_by_uni) 
 
-    #         # degree_track = degrees[0].degree_track if degrees else None
-    #         return render_template('university.html', university=university, degrees=degrees, degrees_by_track=degrees_by_track)
+@students.route('/main/degree_opts/<string:command>/<string:degree>/', methods=['GET', 'POST'])
+@login_required
+def degree_select(degree):
+    # normalized_command = command.lower()
+    normalized_degree = degree.lower()
+    print(f"Selected degree: {normalized_degree}")
 
+
+    return render_template('students.degree_detail')
+
+    # # normalize university entry
+    # universities = Institution.query.all()
+    # matched_universities = [uni for uni in universities if uni.uni_type.lower() == normalized_command]
+
+    # degree_info = None
+
+    # for university in matched_universities:
+    #     # extract all degree table objects into degrees
+    #     degree_info = Degree.query.filter_by(uni_id=university.id, degree_name=normalized_degree).first()
+
+    #     if degree_info:
+    #         break
     
-    students.add_url_rule('/uni-admin/<int:uni_id>/', view_func=Institution.as_view('institution_details'))
+    # if not degree_info:
+    #     return redirect(url_for('students.degree_opts', command=command))
+    
+    return f"This was the selected degree: {normalized_degree}" #render_template('students/degree_detail.html', degree=degree_info, university=university.uni_name)
+
+    #     # create new degree list
+    #     degrees_by_track = defaultdict(list)
+    #     for degree in degrees:
+    #         # add all matched degrees to their respective track
+    #         degrees_by_track[degree.degree_track].append(degree)
+
+    # if request.method == 'POST':
+    #     command = request.form.get('command').strip.lower()
+
+    #     # check whether command selection is valid
+    #     if command in ['public', 'private', 'community']:
+
+    #         # check whether degree selection is valid
+    #         if degree in degrees:
+
+    #             return redirect(url_for('students.degree_select', command=command, degree=degree))
 
 @students.route('/logout')
 @login_required

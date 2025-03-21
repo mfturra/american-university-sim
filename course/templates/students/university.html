@@ -28,52 +28,47 @@
             </div>
         </div>
     </div>
-    <div class="field">
-        <div class="control">
-            <p class="is-size-5">To return back to the island home type 'home':</p>
-        </div>
-    </div>
     
-    <!-- <h1>{{ uni_type }}</h1>
-    <p>{{ public_intro }}</p>
-    <p>{{ general_tracks_intro }}</p> -->
-    <!-- <tr>
-        <th>{{ business_tracks }}</th>
-        <th>{{ social_sciences_tracks }}</th>
-        <th>{{ stem_tracks }}</th>
-    </tr> -->
-    <!-- {% for degrees in degrees_by_uni.items() %}
-        <ul>
-            {% for degree in degrees %}
-            <li>{{ degree.degree_name }}</li>
-            {% endfor %}
-        </ul>
-    {% endfor %} -->
+
     <p>{{ track_query }}</p>
     {% if 'student' in session %}
         <p>{{ logout_option }}</p>
     {% endif %}
-
-    <form method="POST" id="action-form" onsubmit="setActionURL()">
+    <!-- <form method="POST" id="action-form" onsubmit="setActionURL()"> -->
+    <form method="POST" id="action-form" onsubmit="setActionUrl()">
         <div class="field">
             <div class="control">
-                <input class="input is-size-5" type="text" name="command" placeholder="Enter command here" required>
+                <p class="is-size-4">Degree Discovery</p>
+                <p class="is-size-5">Which degree would you like to learn more information about? Type your degree selection below.</p>
+                <input class="input is-size-5" type="text" id="degree-input" name="degree" placeholder="Degree selection" required>
             </div>
         </div>
+        <!-- <div class="column is-full">
+            <hr class="my-5">
+        </div>
+        <div class="field">
+            <div class="control">
+                <p class="is-size-4">Webpage Navigation</p>
+                <p class="is-size-5">To return back to other university options 'home':</p>
+                <input class="input is-size-5" type="text" name="nav-command" placeholder="Enter command here" required>
+            </div>
+        </div> -->
     </form>
+    
 
     <script>
         function setActionUrl() {
-            const commandInput = document.getElementById('command-input').value;
+            // const commandInput = document.getElementById('command-input').value;
+            const degreeInput = document.getElementById('degree-input').value;
             const form = document.getElementById('action-form');
             
             // Update the form action to include the command in the URL
-            form.action = "{{ url_for('students.degree_opts', command='') }}" + commandInput;
+            form.action = "{{ url_for('students.degree_opts', degree='') }}" + degreeInput;
         }
 
         // listen to keyUp events on form
         document.getElementById('action-form').addEventListener('keyup', function(event) {
-            if (event.key = 'Enter') {
+            if (event.key === 'Enter') {
                 event.preventDefault();
                 setActionUrl();
                 this.submit();
