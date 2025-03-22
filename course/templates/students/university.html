@@ -35,22 +35,22 @@
         <p>{{ logout_option }}</p>
     {% endif %}
     <!-- <form method="POST" id="action-form" onsubmit="setActionURL()"> -->
-    <form method="POST" id="action-form" onsubmit="setActionUrl()">
+    <form method="POST" id="action-form" action="{{ url_for('students.degree_opts_post')}}" onsubmit="setActionUrl()">
         <div class="field">
             <div class="control">
                 <p class="is-size-4">Degree Discovery</p>
                 <p class="is-size-5">Which degree would you like to learn more information about? Type your degree selection below.</p>
-                <input class="input is-size-5" type="text" id="degree-input" name="degree" placeholder="Degree selection" required>
+                <input class="input is-size-5" type="text" id="degree-input" name="degree_selection" placeholder="Degree selection" required>
             </div>
         </div>
         <!-- <div class="column is-full">
             <hr class="my-5">
-        </div>
-        <div class="field">
+        </div>-->
+        <!-- <div class="field">
             <div class="control">
                 <p class="is-size-4">Webpage Navigation</p>
                 <p class="is-size-5">To return back to other university options 'home':</p>
-                <input class="input is-size-5" type="text" name="nav-command" placeholder="Enter command here" required>
+                <input class="input is-size-5" type="text" name="command" placeholder="Enter command here" required>
             </div>
         </div> -->
     </form>
@@ -59,11 +59,11 @@
     <script>
         function setActionUrl() {
             // const commandInput = document.getElementById('command-input').value;
-            const degreeInput = document.getElementById('degree-input').value;
+            // const degreeInput = document.getElementById('command').value;
             const form = document.getElementById('action-form');
             
             // Update the form action to include the command in the URL
-            form.action = "{{ url_for('students.degree_opts', degree='') }}" + degreeInput;
+            // form.action = "{{ url_for('students.degree_opts_post', command='') }}" + degreeInput;
         }
 
         // listen to keyUp events on form

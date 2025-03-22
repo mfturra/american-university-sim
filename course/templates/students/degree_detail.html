@@ -13,4 +13,14 @@
             </div>
         </div>
     {% endfor %}
+    <script>
+        function setActionUrl() {
+            // const commandInput = document.getElementById('command-input').value;
+            const degreeInput = document.getElementById('degree-input').value;
+            const form = document.getElementById('action-form');
+            
+            // Update the form action to include the command in the URL
+            form.action = "{{ url_for('students.degree_select', degree='') }}" + degreeInput;
+        }
+    </script>
 {% endblock}

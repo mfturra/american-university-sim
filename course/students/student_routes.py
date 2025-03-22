@@ -37,7 +37,7 @@ def main():
                             universities=universities)
 
 
-@students.route('/main/degree_opts/<string:command>/', methods=['GET', 'POST'])
+@students.route('/main/<string:command>/degree_opts/', methods=['GET'])
 @login_required
 def degree_opts(command):
     # Pass in and normalize the user input to match with db table
@@ -60,34 +60,38 @@ def degree_opts(command):
 
         # store all degrees objects at uni at degrees_by_uni (inactive)
         degrees_by_uni[university.uni_name] = degrees
-
     
-    if request.method == 'POST':
-        selected_degree = request.form.get('degree').strip().lower()
-        nav_command = request.form.get('nav-command').lower()
-
-        # acquire all degrees that match for this university
-        degrees = Degree.query.filter_by(uni_id=university.id).all()
-        
-        # modify degree titles to facilitate matching with user input
-        matched_degrees = [degree for degree in degrees if degree.degree_name.strip().lower() == selected_degree]
-
-        # cycle through degree objects and check for matches to degree request
-        for degree in matched_degrees:
-            if selected_degree == degree.degree_name.strip().lower():
-                print(f"\n\nThe following command was fulfilled: {selected_degree}")
-                return redirect(url_for('students.degree_select', command=command))
-        
-
-        return redirect(url_for('students.degree_select', degree=selected_degree, command=nav_command))
-
-
     return render_template('students/university.html', 
                            universities=matched_universities,
-                           degrees_by_track=degrees_by_track,
-                           degrees_by_uni=degrees_by_uni) 
+                           degrees_by_track=degrees_by_track),
 
-@students.route('/main/degree_opts/<string:command>/<string:degree>/', methods=['GET', 'POST'])
+@students.route('/main/<string:uni_name>/degree_opts/<string:degree_selection>', methods=['POST'])
+@login_required
+def degree_opts_post(uni_name, degree_selection):
+    # process the user input
+    degree_selection = request.form.get('degree').lower()
+
+    degree = Degree.query.filter_by(uni_type=uni_name, degree_name=degree_selection).first()
+
+    if degree:
+        return redirect(url_for('students.degree_select', degree=degree))
+    
+
+    # # cycle through degree objects and check for matches to degree request
+    # for degree in matched_degrees:
+    #     if selected_degree == degree.degree_name.strip().lower():
+    #         print(f"\n\nThe following command was fulfilled: {selected_degree}")
+    #         return redirect(url_for('students.degree_select', command=command))
+
+    
+    
+    
+    
+
+    # return f"You entered {degree_select}" #redirect(url_for('students.degree_select', degree=selected_degree, command=nav_command))
+
+
+@students.route('/main/degree_details', methods=['GET'])
 @login_required
 def degree_select(degree):
     # normalized_command = command.lower()
