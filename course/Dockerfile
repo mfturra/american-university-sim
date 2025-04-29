@@ -4,7 +4,7 @@ FROM python:3.13
 WORKDIR /app
 
 # copy over requirements.txt and install all required dependencies
-COPY requirements.txt .
+COPY course/requirements.txt .
 RUN pip install -r course/requirements.txt
 
 ENV FLASK_APP=course
