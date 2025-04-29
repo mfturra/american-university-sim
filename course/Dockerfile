@@ -5,7 +5,7 @@ WORKDIR /app
 
 # copy over requirements.txt and install all required dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r course/requirements.txt
 
 ENV FLASK_APP=course
 
